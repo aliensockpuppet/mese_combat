@@ -232,6 +232,13 @@ local function crit_particles(obj)
 	})
 end
 
+-- Damage modifiers: fn(hitter, target, damage, opts) returns the new damage.
+-- Games use this for enchantments and potion effects.
+mc.registered_damage_modifiers = {}
+function mc.register_damage_modifier(fn)
+	table.insert(mc.registered_damage_modifiers, fn)
+end
+
 function mc.apply_hit(hitter, target, opts)
 	local w = mc.get_weapon(opts.weapon)
 	local charge = math.max(0, math.min(1, opts.charge or 1))
@@ -243,6 +250,9 @@ function mc.apply_hit(hitter, target, opts)
 	local sprint_hit = full and opts.sprinting == true
 
 	local dmg = w.damage * mult * (opts.damage_mult or 1)
+	for _, fn in ipairs(mc.registered_damage_modifiers) do
+		dmg = fn(hitter, target, dmg, opts) or dmg
+	end
 	if crit then dmg = dmg * mc.cfg.crit_multiplier end
 	dmg = math.max(1, math.floor(dmg + 0.5))
 

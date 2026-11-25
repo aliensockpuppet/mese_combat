@@ -81,6 +81,7 @@ mese_combat.register_food("mymod:bread", itemdef, {
 
 -- Callbacks
 mese_combat.register_allow_hit(function(target, hitter) end)   -- return false to cancel
+mese_combat.register_damage_modifier(function(hitter, target, damage, opts) end) -- return new damage
 mese_combat.register_on_hit(function(attacker, target, info) end)
 	-- info: weapon, damage, charge, full, crit, sprint_hit, kb
 mese_combat.register_on_punch_raw(function(target, hitter, info) end) -- every punch (anticheat)
